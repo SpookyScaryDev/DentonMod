@@ -160,42 +160,63 @@
       <Command>cd $(SolutionDir)\..
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
+    <ClCompile>
+      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug with inlines|Win32'">
     <PreBuildEvent>
       <Command>cd $(SolutionDir)\..
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
+    <ClCompile>
+      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug with inlines and memory log|Win32'">
     <PreBuildEvent>
       <Command>cd $(SolutionDir)\..
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
+    <ClCompile>
+      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dedicated Debug|Win32'">
     <PreBuildEvent>
       <Command>cd $(SolutionDir)\..
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
+    <ClCompile>
+      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dedicated Debug with inlines|Win32'">
     <PreBuildEvent>
       <Command>cd $(SolutionDir)\..
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
+    <ClCompile>
+      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dedicated Release|Win32'">
     <PreBuildEvent>
       <Command>cd $(SolutionDir)\..
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
+    <ClCompile>
+      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
       <Command>cd $(SolutionDir)\..
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
+    <ClCompile>
+      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="game\ai\AAS.cpp" />

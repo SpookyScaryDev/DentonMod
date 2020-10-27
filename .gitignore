@@ -1,7 +1,2 @@
-build
-/neo/.vs/doom/v16/Solution.VC.db-wal
-/neo/.vs/doom/v16/Solution.VC.db-shm
-/neo/.vs/doom/v16/Solution.VC.db
-/neo/.vs/doom/v16/Browse.VC.opendb
-/neo/.vs/doom/v16/Browse.VC.db
-/neo/.vs/doom/v16/.suo
+/build/
+/neo/.vs/
