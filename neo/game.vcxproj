@@ -161,7 +161,7 @@
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
     <ClCompile>
-      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_XKEYCHECK_H;_DENTONMOD;_PORTALSKY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug with inlines|Win32'">
@@ -170,7 +170,7 @@
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
     <ClCompile>
-      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_XKEYCHECK_H;_DENTONMOD;_PORTALSKY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug with inlines and memory log|Win32'">
@@ -179,7 +179,7 @@
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
     <ClCompile>
-      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_XKEYCHECK_H;_DENTONMOD;_PORTALSKY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dedicated Debug|Win32'">
@@ -188,7 +188,7 @@
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
     <ClCompile>
-      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_XKEYCHECK_H;_DENTONMOD;_PORTALSKY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dedicated Debug with inlines|Win32'">
@@ -197,7 +197,7 @@
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
     <ClCompile>
-      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_XKEYCHECK_H;_DENTONMOD;_PORTALSKY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dedicated Release|Win32'">
@@ -206,7 +206,7 @@
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
     <ClCompile>
-      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_XKEYCHECK_H;_DENTONMOD;_PORTALSKY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -215,7 +215,7 @@
 "build\Win32\$(Configuration)\TypeInfo.exe"</Command>
     </PreBuildEvent>
     <ClCompile>
-      <PreprocessorDefinitions>_XKEYCHECK_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_XKEYCHECK_H;_DENTONMOD;_PORTALSKY;_DENTONMOD;_PORTALSKY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -285,6 +285,7 @@
     <ClCompile Include="game\SmokeParticles.cpp" />
     <ClCompile Include="game\Sound.cpp" />
     <ClCompile Include="game\Target.cpp" />
+    <ClCompile Include="game\tracer.cpp" />
     <ClCompile Include="game\Trigger.cpp" />
     <ClCompile Include="game\Weapon.cpp" />
     <ClCompile Include="game\WorldSpawn.cpp" />
@@ -349,6 +350,7 @@
     <ClInclude Include="game\SmokeParticles.h" />
     <ClInclude Include="game\Sound.h" />
     <ClInclude Include="game\Target.h" />
+    <ClInclude Include="game\tracer.h" />
     <ClInclude Include="game\Trigger.h" />
     <ClInclude Include="game\Weapon.h" />
     <ClInclude Include="game\WorldSpawn.h" />

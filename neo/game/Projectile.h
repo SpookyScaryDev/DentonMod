@@ -1,34 +1,15 @@
-/*
-===========================================================================
-
-Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
-
-Doom 3 Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Doom 3 Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
+// Copyright (C) 2004 Id Software, Inc.
+//
 
 #ifndef __GAME_PROJECTILE_H__
 #define __GAME_PROJECTILE_H__
 
+#ifdef _DENTONMOD
+//#include "tracer.h"
+#ifndef _DENTONMOD_PROJECTILE_CPP
+#define _DENTONMOD_PROJECTILE_CPP
+#endif
+#endif
 /*
 ===============================================================================
 
@@ -52,6 +33,7 @@ public :
 	void					Restore( idRestoreGame *savefile );
 
 	void					Create( idEntity *owner, const idVec3 &start, const idVec3 &dir );
+
 	virtual void			Launch( const idVec3 &start, const idVec3 &dir, const idVec3 &pushVelocity, const float timeSinceFire = 0.0f, const float launchPower = 1.0f, const float dmgPower = 1.0f );
 	virtual void			FreeLightDef( void );
 
@@ -78,6 +60,9 @@ public :
 	virtual void			ReadFromSnapshot( const idBitMsgDelta &msg );
 	virtual bool			ClientReceiveEvent( int event, int time, const idBitMsg &msg );
 
+#ifdef _DENTONMOD
+	void					setTracerEffect( dnTracerEffect *effect) { tracerEffect = effect; }
+#endif
 protected:
 	idEntityPtr<idEntity>	owner;
 
@@ -85,9 +70,13 @@ protected:
 		bool				detonate_on_world			: 1;
 		bool				detonate_on_actor			: 1;
 		bool				randomShaderSpin			: 1;
-		bool				isTracer					: 1;
-		bool				noSplashDamage				: 1;
+		bool				noSplashDamage				: 1; 
+		bool				impact_fx_played			: 1; // keeps track of fx played on collided body - BY JCD
 	} projectileFlags;
+
+#ifdef _DENTONMOD
+	dnTracerEffect *tracerEffect;
+#endif
 
 	float					thrust;
 	int						thrust_end;
@@ -119,9 +108,9 @@ protected:
 
 private:
 	bool					netSyncPhysics;
+	const idDeclEntityDef	*damageDef; // stores Damage Def -- By Clone JCD
 
 	void					AddDefaultDamageEffect( const trace_t &collision, const idVec3 &velocity );
-
 	void					Event_Explode( void );
 	void					Event_Fizzle( void );
 	void					Event_RadiusDamage( idEntity *ignore );
@@ -257,9 +246,13 @@ public :
 private:
 	idEntityPtr<idEntity>	owner;
 	idPhysics_RigidBody		physicsObj;
-	const idDeclParticle *	smokeFly;
+	const idDeclParticle *	smokeFly; 
 	int						smokeFlyTime;
+	int						nextSoundTime;		// BY Clone JCD 
+	int						soundTimeDifference;	// BY Clone JCD 
+	bool					continuousSmoke;		//By Clone JCD
 	const idSoundShader *	sndBounce;
+	const idSoundShader *	sndRest;
 
 
 	void					Event_Explode( void );

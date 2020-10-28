@@ -1,0 +1,28 @@
+Dentonmod source code V2.0 (Doom 3 V1.3.1 Compatible):
+
+The source contains changes related to dentonmod. 
+
+Please accept my appologies, first of all. I havent included much of the comments in the source code (I am planning to include them though). If you have any doubts mail me at clone_jc_denton@yahoo.com.
+
+While adding changes to the source code, at certain point in time, I decided to use a macro  _DENTONMOD to keep track of changes I made. 
+
+e.g.
+#ifdef _DENTONMOD 
+	changed line;
+#else 
+	original line;
+#endif
+
+ but the problem is, changes made since then, use that macro; where as the changes made before I added the macro, does not use the macro. 
+
+If you are compiling, please note that, you'll need following two macros #defined (in the property pages->Configuration Properties->C/C++->Prepocessors in case of visual studio) 
+
+_DENTONMOD
+_PORTALSKY
+
+
+
+
+
+
+

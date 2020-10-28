@@ -1,30 +1,5 @@
-/*
-===========================================================================
-
-Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
-
-Doom 3 Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Doom 3 Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
+// Copyright (C) 2004 Id Software, Inc.
+//
 
 #include "../idlib/precompiled.h"
 #pragma hdrstop
@@ -121,6 +96,11 @@ idMultiModelAF::Think
 void idMultiModelAF::Think( void ) {
 	RunPhysics();
 	Present();
+
+#ifdef _DENTONMOD
+	if ( thinkFlags & TH_UPDATEWOUNDPARTICLES )
+		UpdateParticles();
+#endif
 }
 
 
@@ -384,11 +364,19 @@ void idAFAttachment::Damage( idEntity *inflictor, idEntity *attacker, const idVe
 idAFAttachment::AddDamageEffect
 ================
 */
+#ifdef _DENTONMOD
+void idAFAttachment::AddDamageEffect( const trace_t &collision, const idVec3 &velocity, const char *damageDefName, idEntity *soundEnt ) {
+#else
 void idAFAttachment::AddDamageEffect( const trace_t &collision, const idVec3 &velocity, const char *damageDefName ) {
+#endif
 	if ( body ) {
 		trace_t c = collision;
 		c.c.id = JOINT_HANDLE_TO_CLIPMODEL_ID( attachJoint );
+#ifdef _DENTONMOD
+		body->AddDamageEffect( c, velocity, damageDefName, soundEnt );
+#else
 		body->AddDamageEffect( c, velocity, damageDefName );
+#endif
 	}
 }
 
@@ -449,9 +437,13 @@ idAfAttachment::Think
 */
 void idAFAttachment::Think( void ) {
 	idAnimatedEntity::Think();
+
+#ifdef _DENTONMOD
+#else								// This has been taken care of by idAnimatedEntity, so we wont need it now
 	if ( thinkFlags & TH_UPDATEPARTICLES ) {
 		UpdateDamageEffects();
 	}
+#endif
 }
 
 /*
@@ -629,6 +621,10 @@ void idAFEntity_Base::Think( void ) {
 		Present();
 		LinkCombat();
 	}
+#ifdef _DENTONMOD
+	if (thinkFlags & TH_UPDATEWOUNDPARTICLES)
+		UpdateDamageEffects();
+#endif
 }
 
 /*
@@ -1087,7 +1083,13 @@ void idAFEntity_Gibbable::Damage( idEntity *inflictor, idEntity *attacker, const
 		return;
 	}
 	idAFEntity_Base::Damage( inflictor, attacker, dir, damageDefName, damageScale, location );
-	if ( health < -20 && spawnArgs.GetBool( "gib" ) ) {
+			                                                 // New Gibbing System By Clone JCD
+	int healthToGib = spawnArgs.GetInt ("gibHealth"); // GibHealth is suppossed to be declared in entityDef
+																
+	if (healthToGib == 0)					// If its not there, set it to default value
+		healthToGib = -20 ;
+			
+	if ( health < healthToGib && spawnArgs.GetBool( "gib" ) ) {
 		Gib( dir, damageDefName );
 	}
 }

@@ -1,33 +1,9 @@
-/*
-===========================================================================
-
-Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
-
-Doom 3 Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Doom 3 Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
+// Copyright (C) 2004 Id Software, Inc.
+//
 
 #ifndef __GAME_WEAPON_H__
 #define __GAME_WEAPON_H__
+
 
 /*
 ===============================================================================
@@ -55,6 +31,60 @@ static const int LIGHTID_WORLD_MUZZLE_FLASH = 1;
 static const int LIGHTID_VIEW_MUZZLE_FLASH = 100;
 
 class idMoveableItem;
+
+//---------------------------------------- New Particle and light support
+
+#ifdef _DENTONMOD
+
+struct particleFlags_s {
+	bool		isActive			: 1;		// Is the particle active	
+	bool		isSmoke				: 1;		// Is this a smoke particle
+	bool		isContinuous		: 1;		// Is the effect continuous
+	bool		isOffset			: 1;		// Is new Offset needed
+	bool		isDir				: 1;		// Is new Direction needed
+	bool		isOnWorldModel		: 1;		// Is this effect intended for world model only
+	bool		isUpdateJoint		: 1; 
+};
+
+typedef struct {
+	char			name[64];
+	char			particlename[128];
+	int				startTime;
+	idVec3			offset;			//Sometimes you cant find proper joint, then use offset along with muzzle bone
+	idVec3			dir;
+	jointHandle_t	joint;			//The joint on which to attach the particle
+	
+	particleFlags_s particleFlags;	// flags
+    
+	const idDeclParticle* particle;		//Used for smoke particles
+	renderEntity_t renderEntity;
+	qhandle_t modelDefHandle;
+	//idFuncEmitter*  emitter;		//Used for non-smoke particles
+} WeaponParticle_t;
+
+
+struct lightFlags_s {
+	bool		isActive		: 1;		// Is the particle active	
+	bool		isAlwaysOn		: 1;		// Is this light always on
+	bool		isOffset		: 1;		// Is new Offset needed
+	bool		isDir			: 1;		// Is new Direction needed
+	bool		isOnWorldModel	: 1;		// Is this light intended for world model only
+};
+
+typedef struct {
+	char			name[64];
+	int				startTime; 
+	int				endTime;
+	int				lightHandle;
+	idVec3			offset;			//If weapons does not have bones in proper places for some effect use this
+	idVec3			dir;			//If the desired bone is not pointing in proper direction use this to fix it.
+									// Note that the dir should be vector representing X-axis of the bone.
+	lightFlags_s	lightFlags;
+	jointHandle_t	joint;
+	renderLight_t	light;
+} WeaponLight_t;
+//----------------------------------------------
+#endif
 
 class idWeapon : public idAnimatedEntity {
 public:
@@ -104,6 +134,8 @@ public:
 	void					OwnerDied( void );
 	void					BeginAttack( void );
 	void					EndAttack( void );
+	void					BeginSpecialFunction( bool );	// Added by Clone JCD 
+	void					EndSpecialFunction( void );		// Added by Clone JCD 
 	bool					IsReady( void ) const;
 	bool					IsReloading( void ) const;
 	bool					IsHolstered( void ) const;
@@ -140,6 +172,8 @@ public:
 	int						LowAmmo( void ) const;
 	int						AmmoRequired( void ) const;
 
+	int						AmmoCount() const; //new
+	
 	virtual void			WriteToSnapshot( idBitMsgDelta &msg ) const;
 	virtual void			ReadFromSnapshot( const idBitMsgDelta &msg );
 
@@ -155,8 +189,10 @@ public:
 
 private:
 	// script control
-	idScriptBool			WEAPON_ATTACK;
+	idScriptBool			WEAPON_ATTACK;	
 	idScriptBool			WEAPON_RELOAD;
+	idScriptBool			WEAPON_SPECIAL;  // For weapon special function, added by clone JCD
+	idScriptBool			WEAPON_SPECIAL_HOLD;  // For weapon special function, added by clone JCD	idScriptBool			WEAPON_RELOAD;
 	idScriptBool			WEAPON_NETRELOAD;
 	idScriptBool			WEAPON_NETENDRELOAD;
 	idScriptBool			WEAPON_NETFIRING;
@@ -268,6 +304,21 @@ private:
 	jointHandle_t			barrelJointWorld;
 	jointHandle_t			ejectJointWorld;
 
+
+#ifdef _DENTONMOD
+
+/*	typedef struct {
+		char name[64];
+		jointHandle_t joint;
+	}WeaponJoint_t;
+
+	idHashTable<WeaponJoint_t>		weaponJoints;		
+*/
+	idHashTable<WeaponParticle_t>	weaponParticles;
+	idHashTable<WeaponLight_t>		weaponLights;
+
+#endif //_DENTONMOD
+
 	// sound
 	const idSoundShader *	sndHum;
 
@@ -308,13 +359,20 @@ private:
 	void					MuzzleFlashLight( void );
 	void					MuzzleRise( idVec3 &origin, idMat3 &axis );
 	void					UpdateNozzleFx( void );
+#ifdef _DENTONMOD
+	void					InitWeaponFx( void );		
+	void					StopWeaponFx( void );		
+	void					UpdateWeaponFx( void );
+	
+	bool					ChangeProjectileDef( int number );// New
+#endif 
+
 	void					UpdateFlashPosition( void );
 
 	// script events
 	void					Event_Clear( void );
 	void					Event_GetOwner( void );
 	void					Event_WeaponState( const char *statename, int blendFrames );
-	void					Event_SetWeaponStatus( float newStatus );
 	void					Event_WeaponReady( void );
 	void					Event_WeaponOutOfAmmo( void );
 	void					Event_WeaponReloading( void );
@@ -348,6 +406,15 @@ private:
 	void					Event_NetReload( void );
 	void					Event_IsInvisible( void );
 	void					Event_NetEndReload( void );
+	void					Event_SetZoom( int status );	//New
+
+	void					Event_GetProjectileType( void );// New
+	void					Event_ChangeProjectileDef( int number );// New
+	void					Event_StartWeaponParticle( const char* name ); // New
+	void					Event_StopWeaponParticle( const char* name );// New
+
+	void					Event_StartWeaponLight( const char* name );// New
+	void					Event_StopWeaponLight( const char* name );// New
 };
 
 ID_INLINE bool idWeapon::IsLinked( void ) {

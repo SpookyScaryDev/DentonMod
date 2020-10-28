@@ -1,33 +1,12 @@
-/*
-===========================================================================
-
-Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
-
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
-
-Doom 3 Source Code is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Doom 3 Source Code is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
-
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
-
-If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
-
-===========================================================================
-*/
+// Copyright (C) 2004 Id Software, Inc.
+//
 
 #ifndef __GAME_PLAYER_H__
 #define __GAME_PLAYER_H__
+
+#ifndef _DENTONMOD_PLAYER_CPP
+#define _DENTONMOD_PLAYER_CPP
+#endif
 
 /*
 ===============================================================================
@@ -52,7 +31,7 @@ const int	LAND_RETURN_TIME = 300;
 const int	FOCUS_TIME = 300;
 const int	FOCUS_GUI_TIME = 500;
 
-const int MAX_WEAPONS = 16;
+const int MAX_WEAPONS = 32; //16
 
 const int DEAD_HEARTRATE = 0;			// fall to as you die
 const int LOWHEALTH_HEARTRATE_ADJ = 20; // 
@@ -109,6 +88,11 @@ enum {
 	INFLUENCE_LEVEL2,			// no gun, hud, movement
 	INFLUENCE_LEVEL3,			// slow player movement
 };
+
+typedef struct {
+	char		name[64];
+	idList<int>	toggleList;
+} WeaponToggle_t;
 
 class idInventory {
 public:
@@ -169,11 +153,13 @@ public:
 	int						WeaponIndexForAmmoClass( const idDict & spawnArgs, const char *ammo_classname ) const;
 	ammo_t					AmmoIndexForWeaponClass( const char *weapon_classname, int *ammoRequired );
 	const char *			AmmoPickupNameForIndex( ammo_t ammonum ) const;
-	void					AddPickupName( const char *name, const char *icon );
+//	void					AddPickupName( const char *name, const char *icon );
+	void					AddPickupName( const char *name, const char *icon, idPlayer* owner ); //new, dont know what it does.
 
 	int						HasAmmo( ammo_t type, int amount );
 	bool					UseAmmo( ammo_t type, int amount );
-	int						HasAmmo( const char *weapon_classname );			// looks up the ammo information for the weapon class first
+	int						HasAmmo( const char *weapon_classname, bool includeClip = false, idPlayer* owner = NULL );			//new _D3XP
+	//int						HasAmmo( const char *weapon_classname );			// looks up the ammo information for the weapon class first
 
 	void					UpdateArmor( void );
 
@@ -202,6 +188,7 @@ public:
 		EVENT_ABORT_TELEPORTER,
 		EVENT_POWERUP,
 		EVENT_SPECTATE,
+		EVENT_PICKUPNAME, //new, for use with inventory::AddPickupName
 		EVENT_MAXEVENTS
 	};
 
@@ -421,7 +408,7 @@ public:
 	void					NextWeapon( void );
 	void					NextBestWeapon( void );
 	void					PrevWeapon( void );
-	void					SelectWeapon( int num, bool force );
+	void					SelectWeapon( int num, bool force , const bool toggleWeapons=false );
 	void					DropWeapon( bool died ) ;
 	void					StealWeapon( idPlayer *player );
 	void					AddProjectilesFired( int count );
@@ -488,6 +475,13 @@ public:
 	bool					IsRespawning( void );
 	bool					IsInTeleport( void );
 
+	// New------------------
+#ifdef _DENTONMOD_PLAYER_CPP
+	void					SetWeaponZoom( bool Status );
+	void					SetProjectileType( int type );
+	int						GetProjectileType( void );
+#endif// _DENTONMOD_PLAYER_CPP
+
 	idEntity				*GetInfluenceEntity( void ) { return influenceEntity; };
 	const idMaterial		*GetInfluenceMaterial( void ) { return influenceMaterial; };
 	float					GetInfluenceRadius( void ) { return influenceRadius; };
@@ -508,6 +502,8 @@ public:
 	virtual	void			DrawPlayerIcons( void );
 	virtual	void			HidePlayerIcons( void );
 	bool					NeedsIcon( void );
+
+	//idStr					GetCurrentWeapon(); // new
 
 	bool					SelfSmooth( void );
 	void					SetSelfSmooth( bool b );
@@ -540,6 +536,7 @@ private:
 	int						currentWeapon;
 	int						idealWeapon;
 	int						previousWeapon;
+	int						quickWeapon;		// Since previousWeapon does not work in a best way for quick swap - Clone JCD 
 	int						weaponSwitchTime;
 	bool					weaponEnabled;
 	bool					showWeaponViewModel;
@@ -606,6 +603,7 @@ private:
 	idVec3					smoothedOrigin;
 	idAngles				smoothedAngles;
 
+	idHashTable<WeaponToggle_t>	weaponToggles; // new
 	// mp
 	bool					ready;					// from userInfo
 	bool					respawning;				// set to true while in SpawnToPoint for telefrag checks
@@ -621,6 +619,15 @@ private:
 	bool					MPAimHighlight;
 	bool					isTelefragged;			// proper obituaries
 
+#ifdef _DENTONMOD_PLAYER_CPP
+	struct weaponZoom_s {
+		bool				oldZoomStatus	: 1;
+		bool				startZoom		: 1;
+	} weaponZoom;
+
+	byte					projectileType[ MAX_WEAPONS ];
+#endif //_DENTONMOD_PLAYER_CPP
+
 	idPlayerIcon			playerIcon;
 
 	bool					selfSmooth;
@@ -629,6 +636,7 @@ private:
 
 	void					StopFiring( void );
 	void					FireWeapon( void );
+	void					WeaponSpecialFunction( bool keyTapped ); // New
 	void					Weapon_Combat( void );
 	void					Weapon_NPC( void );
 	void					Weapon_GUI( void );
@@ -663,7 +671,12 @@ private:
 	void					ExtractEmailInfo( const idStr &email, const char *scan, idStr &out );
 	void					UpdateObjectiveInfo( void );
 
+	bool					WeaponAvailable( const char* name ); //new
+	
 	void					UseVehicle( void );
+
+	void					Event_WeaponAvailable( const char* name ); // new
+	void					Event_GetImpulseKey( void ); // new
 
 	void					Event_GetButtons( void );
 	void					Event_GetMove( void );
@@ -683,7 +696,35 @@ private:
 	void					Event_LevelTrigger( void );
 	void					Event_Gibbed( void );
 	void					Event_GetIdealWeapon( void );
+
 };
+
+// New------------------
+#ifdef _DENTONMOD_PLAYER_CPP
+
+
+/*
+==================
+idPlayer::setZoom	
+
+Called By Weapon script, used for weapon zooming
+==================
+*/
+
+ID_INLINE void idPlayer::SetWeaponZoom( bool status ) {
+	weaponZoom.startZoom = status;
+}
+
+ID_INLINE void idPlayer::SetProjectileType( int type ) {
+	projectileType[ currentWeapon ] = type;
+}
+
+ID_INLINE int idPlayer::GetProjectileType( void ) {
+	return projectileType[ currentWeapon ];
+}
+// New------------------
+#endif // _DENTONMOD_PLAYER_CPP
+
 
 ID_INLINE bool idPlayer::IsReady( void ) {
 	return ready || forcedReady;

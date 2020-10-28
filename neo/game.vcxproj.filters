@@ -167,6 +167,7 @@
     <ClCompile Include="game\Trigger.cpp" />
     <ClCompile Include="game\Weapon.cpp" />
     <ClCompile Include="game\WorldSpawn.cpp" />
+    <ClCompile Include="game\tracer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\ai\AAS.h">
@@ -297,6 +298,7 @@
     <ClInclude Include="game\Trigger.h" />
     <ClInclude Include="game\Weapon.h" />
     <ClInclude Include="game\WorldSpawn.h" />
+    <ClInclude Include="game\tracer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="game\Game.def" />

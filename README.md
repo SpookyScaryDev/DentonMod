@@ -1,5 +1,6 @@
-# Denton's Enhanced Doom3
-This is the original DOOM 3 SDK with the source from Denton's Enhanced Doom3 added.
-The original game files and the mod files will need to be added to get this to work.
+# doom3.glp
+This is just a quick fork of the original DOOM 3 source release.
+I have retargeted the project files and fixed building the SDK on Windows, to make mod development for the original game easier.
+However the game exe is a bit of a pain to get working due to changes in MFC and other Windows libraries.
 
-The original mod and source code can be found [here](https://www.moddb.com/mods/dentons-enhanced-doom3-v202).
+For a modern, fully working source tree, see https://github.com/dhewm/dhewm3
