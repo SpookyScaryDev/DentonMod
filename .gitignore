@@ -1,2 +1,5 @@
 /build/
 /neo/.vs/
+
+**.user
+**.filters
